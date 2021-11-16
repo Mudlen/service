@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Service</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="/css/style.css"/>
+    </head>
+    <body>
+        <p style="font-family: 'Montserrat',Verdana,sans-serif;">
+            Сервис управления записями</p>
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'get')">Получить запись</button>
+            <button class="tablinks" onclick="openTab(event, 'set')">Создать запись</button>
+            <button class="tablinks" onclick="openTab(event,'del')">Удалить запись</button>
+            <button class="tablinks" onclick="openTab(event, 'dump')">Выгрузить хранилище</button>
+            <button class="tablinks" onclick="openTab(event, 'load')">Загрузить хранилище</button>
+        </div>
+
+        <div id="get" class="tabcontent">
+            <div style="display: table; margin: 0 auto;">
+                <p style="font-family: 'Montserrat',Verdana,sans-serif;
+                        color: rgb(85, 81, 81);">
+                    Введите ключ для получения записи из хранилища:
+                </p>
+                <form method="post" action="get" name="formGet" onsubmit="return validateGetForm()">
+                    <input placeholder="ключ" class="inputText inputActive" type="text" name="keyGet">
+                    <input value="Полученное значение: " type="hidden" name="status">
+                    <button class="inputText hover" type="submit">Получить</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="set" class="tabcontent">
+            <div style="display: table; margin: 0 auto;">
+                <p style="font-family: 'Montserrat',Verdana,sans-serif;
+                        color: rgb(85, 81, 81);">
+                    Введите несколько параметров для создания записи:
+                </p>
+                <form class="" action="set" method="post" name="formSet" onsubmit="return validateSetForm()">
+                    <input placeholder="ключ" class="inputText inputActive" type="text" name="keySet">
+                    <input placeholder="данные" class="inputText inputActive" type="text" name="dataSet">
+                    <input placeholder="ttl (сек)" class="inputText inputActive" type="number" name="ttlSet" style="max-width: 150px;">
+                    <input type="hidden" name="status" value="Операция записи (set) прошла успешно">
+                    <button class="inputText hover" type="submit">Создать</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="del" class="tabcontent">
+            <div style="display: table; margin: 0 auto;">
+                <p style="font-family: 'Montserrat',Verdana,sans-serif;
+                        color: rgb(85, 81, 81);">
+                    Введите ключ для удаления записи из хранилища:
+                </p>
+                <form name="formDel" class="" action="del" method="post" onsubmit="return validateDelForm()">
+                    <input placeholder="ключ" class="inputText inputActive" type="text" name="keyDel">
+                    <input type="hidden" value="Удаленные данные: " name="status">
+                    <button class="inputText hover" type="submit">Удалить</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="dump" class="tabcontent">
+            <div style="display: table; margin: 0 auto;">
+                <p style="font-family: 'Montserrat',Verdana,sans-serif;
+                        color: rgb(85, 81, 81);">
+                    Получите хранилище в виде файла:
+                </p>
+                <form class="" action="dump" name="formDump" method="post">
+                    <button class="inputText hover" type="submit">Скачать</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="load" class="tabcontent">
+            <div style="display: table; margin: 0 auto;">
+                <p style="font-family: 'Montserrat',Verdana,sans-serif;
+                        color: rgb(85, 81, 81);">
+                    Для загрузки выберите или перетащите файл хранилища:
+                </p>
+                <form class="" action="load" method="post" enctype="multipart/form-data">
+                    <input placeholder="ключ" class="inputText inputActive" type="file" name="file" >
+                    <button class="inputText hover" type="submit">Загрузить</button>
+                </form>
+            </div>
+        </div>
+
+        <div style="display: table; margin: 0 auto; max-width: 700px; max-height: 350px;">
+            <div class="consoleLog">
+                <p style="font-size: 20px; color:rgba(167, 64, 145, 0.753); text-align: center;">Log console</p>
+                {{#consoleLog}}
+                    <p>{{.}}</p>
+                {{/consoleLog}}
+            </div>
+        </div>
+
+
+        <script>
+            function openTab(event, tab){
+                let i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++){
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(tab).style.display = "block";
+                event.currentTarget.className += " active";
+            }
+
+            function validateSetForm(){
+                let key = document.forms["formSet"]["keySet"].value;
+                let data = document.forms["formSet"]["dataSet"].value;
+                let ttl = document.forms["formSet"]["ttlSet"].value;
+                if(ttl === ""){
+                    document.forms["formSet"]["ttlSet"].value = 1000;
+                }
+                if(key === ""){
+                    document.forms["formSet"]["keySet"].required = true;
+                    document.forms["formSet"]["status"].value = "Операция записи (set) прервана: не правильно введен ключ";
+                }
+                if(data === ""){
+                    document.forms["formSet"]["dataSet"].required = true;
+                    document.forms["formSet"]["status"].value = "Операция записи (set) прервана: не правильно введены данные";
+                }
+                return true;
+            }
+
+            function validateGetForm(){
+                let key = document.forms["formGet"]["keyGet"].value;
+                if(key === ""){
+                    document.forms["formGet"]["status"].value = "Операция получения (get) прервана: не правильно введен ключ";
+                }
+                return true;
+            }
+
+            function validateDelForm(){
+                let key = document.forms["formDel"]["keyDel"].value;
+                if(key === ""){
+                    document.forms["formDel"]["status"].value = "Операция удаления (remove) прервана: не правильно введен ключ";
+                }
+                return true;
+            }
+        </script>
+    </body>
+</html>

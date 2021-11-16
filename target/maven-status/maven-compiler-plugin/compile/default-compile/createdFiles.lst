@@ -1,0 +1,8 @@
+org\example\service\ServiceStorage.class
+org\example\service\ServiceData$ServiceDataTask.class
+org\example\service\MainApplication.class
+org\example\service\ServiceData.class
+org\example\service\ServiceStorage$EmptyDataValidationTask.class
+org\example\service\ServiceStorage$1.class
+org\example\service\WebController.class
+org\example\service\ServiceData$1.class
